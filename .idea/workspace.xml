@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bcea0219-6270-45e9-bcb1-2ea34287b7de" name="Changes" comment="" />
+    <list default="true" id="bcea0219-6270-45e9-bcb1-2ea34287b7de" name="Changes" comment="add Hotel and Room entities with repositories">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/response/HotelResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/response/RoomResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/service/HotelService.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,9 +36,9 @@
     &quot;accountId&quot;: &quot;800ecf16-92cd-44d1-a776-dccb542dba5a&quot;
   }
 }</component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="3DOFZ7PnoucqOsWtastiulu77fn" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -43,6 +47,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
@@ -98,10 +103,24 @@
       <option name="presentableId" value="Default" />
       <updated>1778145262141</updated>
       <workItem from="1778145263197" duration="728000" />
+      <workItem from="1778145999530" duration="631000" />
     </task>
+    <task id="LOCAL-00001" summary="add Hotel and Room entities with repositories">
+      <option name="closed" value="true" />
+      <created>1778146025947</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1778146025947</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add Hotel and Room entities with repositories" />
+    <option name="LAST_COMMIT_MESSAGE" value="add Hotel and Room entities with repositories" />
   </component>
 </project>
