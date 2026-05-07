@@ -4,17 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bcea0219-6270-45e9-bcb1-2ea34287b7de" name="Changes" comment="add Booking entity with countdown timer method">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/request/BookingRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/request/ReviewRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/response/BookingResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/response/PaymentResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/service/BookingService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/service/PaymentService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/service/ReviewService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/5d4daba7-ac1f-4269-a447-14aef776d5f7.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/5d4daba7-ac1f-4269-a447-14aef776d5f7.xml" afterDir="false" />
+    <list default="true" id="bcea0219-6270-45e9-bcb1-2ea34287b7de" name="Changes" comment="add frontend styles and JavaScript">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/exception/BadRequestException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -26,6 +17,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="CSS File" />
+        <option value="JavaScript File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -38,12 +32,12 @@
     &quot;assignee&quot;: &quot;Bauyrjan18&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Bauyrjan18/Booking.com.git",
-    "accountId": "8218f5ea-b952-467a-8245-a011532f6e91"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Bauyrjan18/Booking.com.git&quot;,
+    &quot;accountId&quot;: &quot;8218f5ea-b952-467a-8245-a011532f6e91&quot;
   }
-}]]></component>
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -56,31 +50,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Java projects\Booking.com" />
@@ -88,11 +84,13 @@
   </component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
+      <module name="Booking.com" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Booking.com" />
       <option name="filePath" />
       <method v="2" />
     </configuration>
@@ -121,7 +119,21 @@
       <updated>1778145262141</updated>
       <workItem from="1778145263197" duration="728000" />
       <workItem from="1778145999530" duration="631000" />
-      <workItem from="1778147549626" duration="941000" />
+      <workItem from="1778147549626" duration="1415000" />
+      <workItem from="1778149176729" duration="181000" />
+      <workItem from="1778149370441" duration="145000" />
+      <workItem from="1778149577693" duration="281000" />
+      <workItem from="1778149883984" duration="8000" />
+      <workItem from="1778149926450" duration="10000" />
+      <workItem from="1778149954613" duration="12000" />
+      <workItem from="1778149990645" duration="9000" />
+      <workItem from="1778150019405" duration="15000" />
+      <workItem from="1778150053617" duration="7000" />
+      <workItem from="1778150078541" duration="6000" />
+      <workItem from="1778150106756" duration="54000" />
+      <workItem from="1778150182786" duration="44000" />
+      <workItem from="1778150299709" duration="11000" />
+      <workItem from="1778150335741" duration="72000" />
     </task>
     <task id="LOCAL-00001" summary="add Hotel and Room entities with repositories">
       <option name="closed" value="true" />
@@ -155,7 +167,55 @@
       <option name="project" value="LOCAL" />
       <updated>1778148093208</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="implement booking, payment and review services">
+      <option name="closed" value="true" />
+      <created>1778148518014</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1778148518014</updated>
+    </task>
+    <task id="LOCAL-00006" summary="add booking, payment and review REST endpoints">
+      <option name="closed" value="true" />
+      <created>1778149404012</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1778149404012</updated>
+    </task>
+    <task id="LOCAL-00007" summary="add global exception handling">
+      <option name="closed" value="true" />
+      <created>1778149426912</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1778149426912</updated>
+    </task>
+    <task id="LOCAL-00008" summary="add database seed data with test hotels and users">
+      <option name="closed" value="true" />
+      <created>1778149461508</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1778149461508</updated>
+    </task>
+    <task id="LOCAL-00009" summary="add HTML templates and page controller">
+      <option name="closed" value="true" />
+      <created>1778150209888</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1778150209888</updated>
+    </task>
+    <task id="LOCAL-00010" summary="add frontend styles and JavaScript">
+      <option name="closed" value="true" />
+      <created>1778150369664</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1778150369664</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -166,6 +226,12 @@
     <MESSAGE value="1" />
     <MESSAGE value="add Booking entity with countdown timer method" />
     <MESSAGE value="add Payment and Review entities with repositories" />
-    <option name="LAST_COMMIT_MESSAGE" value="add Payment and Review entities with repositories" />
+    <MESSAGE value="implement booking, payment and review services" />
+    <MESSAGE value="add booking, payment and review REST endpoints" />
+    <MESSAGE value="add global exception handling" />
+    <MESSAGE value="add database seed data with test hotels and users" />
+    <MESSAGE value="add HTML templates and page controller" />
+    <MESSAGE value="add frontend styles and JavaScript" />
+    <option name="LAST_COMMIT_MESSAGE" value="add frontend styles and JavaScript" />
   </component>
 </project>
