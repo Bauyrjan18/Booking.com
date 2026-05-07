@@ -87,7 +87,6 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .btn-nav-outline:hover { border-color: white; background: rgba(255,255,255,0.1); }
 .hamburger { display: none; background: none; color: white; font-size: 20px; margin-left: auto; }
 
-/* ===== HERO ===== */
 .hero {
     position: relative;
     min-height: 480px;
@@ -313,7 +312,6 @@ button { cursor: pointer; border: none; font-family: inherit; }
     font-weight: 500;
 }
 
-/* SKELETON */
 .skeleton-card {
     background: white;
     border-radius: var(--radius-lg);
@@ -325,7 +323,6 @@ button { cursor: pointer; border: none; font-family: inherit; }
     50% { opacity: 0.5; }
 }
 
-/* ===== WHY US ===== */
 .why-us {
     background: var(--blue);
     padding: 64px 20px;

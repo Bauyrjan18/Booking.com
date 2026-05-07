@@ -4,30 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bcea0219-6270-45e9-bcb1-2ea34287b7de" name="Changes" comment="add AI recommendation chatbot">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/request/BadRequestException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/request/PaymentRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/request/SearchRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/response/ReviewResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/dto/response/UserResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/booking/exception/BookingException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/5d4daba7-ac1f-4269-a447-14aef776d5f7.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/5d4daba7-ac1f-4269-a447-14aef776d5f7/storage_v2/_src_/database/BookingDB.d36s8A.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/5d4daba7-ac1f-4269-a447-14aef776d5f7/storage_v2/_src_/database/BookingDB.d36s8A/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/5d4daba7-ac1f-4269-a447-14aef776d5f7/storage_v2/_src_/database/BookingDB.d36s8A/schema/public.abK9xQ.meta" beforeDir="false" />
+    <list default="true" id="bcea0219-6270-45e9-bcb1-2ea34287b7de" name="Changes" comment="README file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/booking/config/DataInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/booking/config/DataInitializer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/booking/controller/PaymentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/booking/controller/PaymentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/booking/controller/ReviewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/booking/controller/ReviewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/booking/exception/BadRequestException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/booking/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/booking/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/booking/model/Booking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/booking/model/Booking.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/booking/model/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/booking/model/Payment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/booking/model/Review.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/booking/model/Review.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/booking/service/BookingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/booking/service/BookingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/booking/service/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/booking/service/PaymentService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,6 +116,7 @@
       <workItem from="1778145263197" duration="728000" />
       <workItem from="1778145999530" duration="631000" />
       <workItem from="1778153952722" duration="63000" />
+      <workItem from="1778154145969" duration="2212000" />
     </task>
     <task id="LOCAL-00001" summary="add Hotel and Room entities with repositories">
       <option name="closed" value="true" />
@@ -147,7 +126,23 @@
       <option name="project" value="LOCAL" />
       <updated>1778146025947</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Final version">
+      <option name="closed" value="true" />
+      <created>1778154322319</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1778154322319</updated>
+    </task>
+    <task id="LOCAL-00003" summary="README file">
+      <option name="closed" value="true" />
+      <created>1778154388770</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1778154388770</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -155,6 +150,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add Hotel and Room entities with repositories" />
-    <option name="LAST_COMMIT_MESSAGE" value="add Hotel and Room entities with repositories" />
+    <MESSAGE value="Final version" />
+    <MESSAGE value="README file" />
+    <option name="LAST_COMMIT_MESSAGE" value="README file" />
   </component>
 </project>

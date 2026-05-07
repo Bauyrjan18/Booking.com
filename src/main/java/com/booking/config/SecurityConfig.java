@@ -28,12 +28,10 @@ public class SecurityConfig {
 
     private final UserRepository userRepository;
 
-    // Inject ONLY UserRepository here — NOT JwtAuthFilter (that caused the cycle)
     public SecurityConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    // JwtAuthFilter is injected as a METHOD parameter — Spring resolves it AFTER the bean is created
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthFilter jwtAuthFilter) throws Exception {

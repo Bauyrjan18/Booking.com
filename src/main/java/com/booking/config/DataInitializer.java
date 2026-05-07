@@ -24,7 +24,7 @@ public class DataInitializer implements CommandLineRunner {
         if (hotelRepository.count() == 0) {
             seedHotels();
         }
-        System.out.println("✅ NomadHome  data initialized successfully!");
+        System.out.println(" NomadHome  data initialized successfully!");
     }
 
     private void seedUsers() {
@@ -49,7 +49,6 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void seedHotels() {
-        // Hotel 1 - Almaty 5 stars
         Hotel h1 = hotelRepository.save(Hotel.builder()
                 .name("The Ritz-Carlton Almaty").city("Алматы").country("Kazakhstan")
                 .address("пр. Достык, 100").stars(5)
@@ -71,7 +70,6 @@ public class DataInitializer implements CommandLineRunner {
                 .isAvailable(true).build());
         addRooms(h2, 30000, 45000, 80000);
 
-        // Hotel 3 - Astana 5 stars
         Hotel h3 = hotelRepository.save(Hotel.builder()
                 .name("The St. Regis Astana").city("Астана").country("Kazakhstan")
                 .address("пр. Туран, 10").stars(5)
@@ -82,7 +80,6 @@ public class DataInitializer implements CommandLineRunner {
                 .isAvailable(true).build());
         addRooms(h3, 65000, 95000, 180000);
 
-        // Hotel 4 - Astana 4 stars
         Hotel h4 = hotelRepository.save(Hotel.builder()
                 .name("Hilton Astana").city("Астана").country("Kazakhstan")
                 .address("ул. Сыганак, 2").stars(4)
@@ -93,7 +90,6 @@ public class DataInitializer implements CommandLineRunner {
                 .isAvailable(true).build());
         addRooms(h4, 25000, 38000, 70000);
 
-        // Hotel 5 - Shymkent 3 stars
         Hotel h5 = hotelRepository.save(Hotel.builder()
                 .name("Rixos Shymkent").city("Шымкент").country("Kazakhstan")
                 .address("ул. Байдибек би, 201").stars(4)
@@ -104,7 +100,6 @@ public class DataInitializer implements CommandLineRunner {
                 .isAvailable(true).build());
         addRooms(h5, 18000, 28000, 50000);
 
-        // Hotel 6 - Almaty budget
         Hotel h6 = hotelRepository.save(Hotel.builder()
                 .name("Holiday Inn Almaty").city("Алматы").country("Kazakhstan")
                 .address("ул. Гоголя, 127").stars(3)
@@ -115,7 +110,6 @@ public class DataInitializer implements CommandLineRunner {
                 .isAvailable(true).build());
         addRooms(h6, 12000, 18000, 32000);
 
-        // Hotel 7 - Almaty luxury boutique
         Hotel h7 = hotelRepository.save(Hotel.builder()
                 .name("Boutique Hotel Kazzhol").city("Алматы").country("Kazakhstan")
                 .address("ул. Гоголя, 127/1").stars(5)
@@ -126,7 +120,6 @@ public class DataInitializer implements CommandLineRunner {
                 .isAvailable(true).build());
         addRooms(h7, 80000, 120000, 250000);
 
-        // Hotel 8 - Astana budget
         Hotel h8 = hotelRepository.save(Hotel.builder()
                 .name("Ramada by Wyndham Astana").city("Астана").country("Kazakhstan")
                 .address("ул. Кунаева, 14").stars(3)

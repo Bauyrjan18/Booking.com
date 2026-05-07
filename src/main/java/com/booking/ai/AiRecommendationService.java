@@ -18,10 +18,6 @@ public class AiRecommendationService {
     private final ReviewRepository reviewRepository;
     private final HotelService hotelService;
 
-    /**
-     * Chat with AI assistant — rule-based NLP that understands user intent.
-     * Uses parameterized JPA queries to protect against SQL injection.
-     */
     public AiResponse chat(String userMessage) {
         if (userMessage == null || userMessage.isBlank()) {
             return new AiResponse("Привет! Я ваш помощник по бронированию. Спросите меня о лучших отелях, ценах или рекомендациях!", Collections.emptyList());
@@ -42,22 +38,18 @@ public class AiRecommendationService {
             );
         }
 
-        // Best/Top hotels by rating
         if (containsAny(msg, "лучш", "топ", "рейтинг", "best", "top", "recommend")) {
             return getTopRatedHotels();
         }
 
-        // Cheap / budget
         if (containsAny(msg, "дешев", "бюджет", "эконом", "cheap", "budget", "affordable", "недорог")) {
             return getCheapestHotels();
         }
 
-        // Luxury
         if (containsAny(msg, "люкс", "luxury", "5 звезд", "5 star", "vip", "премиум")) {
             return getLuxuryHotels();
         }
 
-        // City search
         List<String> cities = hotelRepository.findAllCities();
         for (String city : cities) {
             if (msg.contains(city.toLowerCase())) {
@@ -65,12 +57,10 @@ public class AiRecommendationService {
             }
         }
 
-        // Price query
         if (containsAny(msg, "цена", "стоим", "price", "cost", "сколько")) {
             return getPriceInfo();
         }
 
-        // Help
         if (containsAny(msg, "помог", "help", "что умеешь", "что можешь")) {
             return new AiResponse(
                     "🤖 Я могу помочь вам:\n\n" +
@@ -83,7 +73,6 @@ public class AiRecommendationService {
             );
         }
 
-        // Default
         return new AiResponse(
                 "🔍 Не совсем понял ваш запрос. Попробуйте:\n" +
                         "• «лучшие отели» — топ по рейтингу\n" +

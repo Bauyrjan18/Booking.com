@@ -54,7 +54,6 @@ public class BookingService {
         if (!checkOut.isAfter(checkIn)) throw new BookingException("Check-out must be after check-in");
         if (checkIn.isBefore(LocalDate.now())) throw new BookingException("Check-in cannot be in the past");
 
-        // Check availability - uses JPA parameterized queries (SQL injection safe)
         List<Room> available = roomRepository.findAvailableRooms(hotel.getId(), checkIn, checkOut);
         if (available.stream().noneMatch(r -> r.getId().equals(room.getId()))) {
             throw new BookingException("Room is already booked for selected dates");
