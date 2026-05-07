@@ -1,7 +1,7 @@
 package com.booking.model;
 
-import jakarta.persistence.;
-import lombok.;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -84,14 +84,13 @@ public class DataInitializer implements CommandLineRunner {
 
         // Hotel 4 - Astana 4 stars
         Hotel h4 = hotelRepository.save(Hotel.builder()
-                Hotel h4 = hotelRepository.save(Hotel.builder()
-                        .name("Hilton Astana").city("Астана").country("Kazakhstan")
-                        .address("ул. Сыганак, 2").stars(4)
-                        .pricePerNight(new BigDecimal("38000"))
-                        .description("Отель в самом центре столицы рядом с ЭКСПО. Современные номера, панорамный бар и собственный спа-центр.")
-                        .imageUrl("https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800")
-                        .amenities("WiFi,Pool,Spa,Restaurant,Bar,BusinessCenter")
-                        .isAvailable(true).build());
+                .name("Hilton Astana").city("Астана").country("Kazakhstan")
+                .address("ул. Сыганак, 2").stars(4)
+                .pricePerNight(new BigDecimal("38000"))
+                .description("Отель в самом центре столицы рядом с ЭКСПО. Современные номера, панорамный бар и собственный спа-центр.")
+                .imageUrl("https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800")
+                .amenities("WiFi,Pool,Spa,Restaurant,Bar,BusinessCenter")
+                .isAvailable(true).build());
         addRooms(h4, 25000, 38000, 70000);
 
         // Hotel 5 - Shymkent 3 stars
