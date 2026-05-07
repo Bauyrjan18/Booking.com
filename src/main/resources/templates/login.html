@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Вход — NomadHome</title>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar"><div class="nav-container">
+    <a href="/" class="logo"><i class="fas fa-bed"></i> NomadHome</a>
+</div></nav>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <h1>Добро пожаловать!</h1>
+        <p>Войдите в свой аккаунт NomadHome</p>
+        <div class="error-msg" id="errMsg"></div>
+        <div class="form-group">
+            <label>Имя пользователя</label>
+            <input type="text" id="username" placeholder="Введите логин" autocomplete="username"/>
+        </div>
+        <div class="form-group">
+            <label>Пароль</label>
+            <input type="password" id="password" placeholder="Введите пароль" autocomplete="current-password"
+                   onkeydown="if(event.key==='Enter') doLogin()"/>
+        </div>
+        <button class="btn-primary" onclick="doLogin()" id="loginBtn">
+            <i class="fas fa-sign-in-alt"></i> Войти
+        </button>
+        <div class="auth-footer">
+            Нет аккаунта? <a href="/register">Зарегистрироваться</a>
+        </div>
+        <div style="margin-top:16px; padding:12px; background:#f8f9fa; border-radius:8px; font-size:13px; color:#6b7280;">
+            <strong>Тест:</strong><br>
+            👤 Пользователь: <code>user / user123</code><br>
+            🔑 Администратор: <code>admin / admin123</code>
+        </div>
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+    if (Auth.isLoggedIn()) window.location.href = '/';
+
+    async function doLogin() {
+        const btn = document.getElementById('loginBtn');
+        const err = document.getElementById('errMsg');
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (!username || !password) {
+            err.textContent = 'Заполните все поля'; err.style.display = 'block'; return;
+        }
+
+        btn.disabled = true; btn.textContent = 'Вход...';
+        err.style.display = 'none';
+
+        try {
+            const data = await api('/api/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password })
+            });
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data));
+            showToast('Добро пожаловать, ' + (data.firstName || data.username) + '!');
+            setTimeout(() => window.location.href = '/', 800);
+        } catch (e) {
+            err.textContent = e.message || 'Неверный логин или пароль';
+            err.style.display = 'block';
+            btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Войти';
+        }
+    }
+</script>
+</body>
+</html>

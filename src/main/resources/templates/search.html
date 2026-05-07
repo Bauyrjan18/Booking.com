@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Поиск — NomadHome</title>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-container">
+    <a href="/" class="logo"><i class="fas fa-bed"></i> NomadHome</a>
+    <div class="nav-links" id="navLinks">
+        <a href="/hotels">Отели</a>
+        <a href="/search" style="color:var(--yellow)">Поиск</a>
+        <span id="guestLinks"><a href="/login" class="btn-nav-outline">Войти</a><a href="/register" class="btn-nav">Регистрация</a></span>
+        <span id="userLinks" style="display:none">
+      <a href="/bookings"><i class="fas fa-calendar-check"></i> Брони</a>
+      <a href="/profile"><i class="fas fa-user-circle"></i> <span id="navUsername"></span></a>
+      <button onclick="logout()" class="btn-nav-outline">Выйти</button>
+    </span>
+    </div>
+    <button class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+</div></nav>
+
+<!-- Search bar -->
+<div style="background:var(--blue);padding:20px">
+    <div class="container">
+        <div class="search-grid" style="background:var(--yellow);border-radius:12px;padding:14px">
+            <div class="search-field">
+                <label><i class="fas fa-map-marker-alt"></i> Город</label>
+                <input type="text" id="searchCity" list="cityList2" placeholder="Алматы..."/>
+                <datalist id="cityList2"></datalist>
+            </div>
+            <div class="search-field">
+                <label><i class="fas fa-calendar"></i> Заезд</label>
+                <input type="date" id="searchCheckIn"/>
+            </div>
+            <div class="search-field">
+                <label><i class="fas fa-calendar"></i> Выезд</label>
+                <input type="date" id="searchCheckOut"/>
+            </div>
+            <div class="search-field">
+                <label><i class="fas fa-user"></i> Гостей</label>
+                <select id="searchGuests">
+                    <option>1</option><option selected>2</option><option>3</option><option>4</option>
+                </select>
+            </div>
+            <button class="btn-search" onclick="doSearch()"><i class="fas fa-search"></i> Найти</button>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div id="resultsSummary" style="margin-bottom:16px;font-size:16px;font-weight:600;color:#374151"></div>
+        <div class="hotels-grid" id="resultsGrid">
+            <div style="text-align:center;padding:60px;color:#6b7280;grid-column:1/-1">
+                <i class="fas fa-search fa-2x" style="margin-bottom:12px"></i><br>Введите параметры и нажмите «Найти»
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="ai-fab" onclick="toggleChat()" title="AI-помощник"><i class="fas fa-robot"></i><span class="ai-badge">AI</span></div>
+<div class="ai-chat-window" id="aiChat">
+    <div class="ai-chat-header">
+        <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+        <div><strong>NomadHome AI</strong><small>Онлайн</small></div>
+        <button onclick="toggleChat()" class="ai-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="ai-chat-messages" id="aiMessages">
+        <div class="ai-msg bot"><div class="ai-msg-bubble">🔍 Помогу с поиском! Укажите город или предпочтения.</div></div>
+    </div>
+    <div class="ai-quick-btns">
+        <button onclick="sendQuick('лучшие отели')">⭐ Топ</button>
+        <button onclick="sendQuick('дешевые отели')">💰 Бюджет</button>
+    </div>
+    <div class="ai-chat-input">
+        <input type="text" id="aiInput" placeholder="Напишите..." onkeydown="if(event.key==='Enter') sendAiMsg()"/>
+        <button onclick="sendAiMsg()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+    // Fill from URL params
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('city')) document.getElementById('searchCity').value = params.get('city');
+    if (params.get('checkIn')) document.getElementById('searchCheckIn').value = params.get('checkIn');
+    if (params.get('checkOut')) document.getElementById('searchCheckOut').value = params.get('checkOut');
+
+    // Default dates if not set
+    if (!document.getElementById('searchCheckIn').value) {
+        const t = new Date(); t.setDate(t.getDate()+1);
+        document.getElementById('searchCheckIn').value = t.toISOString().split('T')[0];
+    }
+    if (!document.getElementById('searchCheckOut').value) {
+        const t = new Date(); t.setDate(t.getDate()+7);
+        document.getElementById('searchCheckOut').value = t.toISOString().split('T')[0];
+    }
+
+    // Load cities
+    fetch('/api/hotels/cities').then(r => r.json()).then(cities => {
+        const dl = document.getElementById('cityList2');
+        cities.forEach(c => { const o = document.createElement('option'); o.value = c; dl.appendChild(o); });
+    });
+
+    // Auto-search if params exist
+    if (params.get('city') || params.get('checkIn')) doSearch();
+
+    async function doSearch() {
+        const city = document.getElementById('searchCity').value.trim();
+        const checkIn = document.getElementById('searchCheckIn').value;
+        const checkOut = document.getElementById('searchCheckOut').value;
+
+        const qp = new URLSearchParams();
+        if (city) qp.set('city', city);
+        if (checkIn) qp.set('checkIn', checkIn);
+        if (checkOut) qp.set('checkOut', checkOut);
+
+        document.getElementById('resultsGrid').innerHTML =
+            '<div style="text-align:center;padding:48px;color:#6b7280;grid-column:1/-1"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+
+        try {
+            const hotels = await api('/api/hotels/search?' + qp.toString());
+            const summary = document.getElementById('resultsSummary');
+            summary.textContent = city
+                ? `Найдено ${hotels.length} отелей в городе «${city}»`
+                : `Найдено ${hotels.length} доступных отелей`;
+
+            const grid = document.getElementById('resultsGrid');
+            if (!hotels.length) {
+                grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <i class="fas fa-search"></i>
+          <h3>Ничего не найдено</h3>
+          <p>Попробуйте изменить даты или город</p>
+        </div>`;
+                return;
+            }
+            grid.innerHTML = hotels.map(hotelCard).join('');
+        } catch (e) {
+            document.getElementById('resultsGrid').innerHTML = `<p style="color:red">Ошибка: ${e.message}</p>`;
+        }
+    }
+</script>
+</body>
+</html>

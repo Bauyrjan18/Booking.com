@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Мои бронирования — NomadHome</title>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-container">
+    <a href="/" class="logo"><i class="fas fa-bed"></i> NomadHome</a>
+    <div class="nav-links" id="navLinks">
+        <a href="/hotels">Отели</a>
+        <a href="/bookings" style="color:var(--yellow)">Мои брони</a>
+        <span id="guestLinks"><a href="/login" class="btn-nav-outline">Войти</a></span>
+        <span id="userLinks" style="display:none">
+      <a href="/profile"><i class="fas fa-user-circle"></i> <span id="navUsername"></span></a>
+      <button onclick="logout()" class="btn-nav-outline">Выйти</button>
+    </span>
+    </div>
+    <button class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+</div></nav>
+
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-calendar-check"></i> Мои бронирования</h1>
+        <p>Управляйте своими поездками</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <!-- Status filter tabs -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px">
+            <button class="tab-btn active" onclick="filterStatus('all', this)">Все</button>
+            <button class="tab-btn" onclick="filterStatus('PENDING', this)">⏳ Ожидание</button>
+            <button class="tab-btn" onclick="filterStatus('CONFIRMED', this)">✅ Подтверждённые</button>
+            <button class="tab-btn" onclick="filterStatus('CANCELLED', this)">❌ Отменённые</button>
+            <button class="tab-btn" onclick="filterStatus('COMPLETED', this)">🏁 Завершённые</button>
+        </div>
+
+        <div id="bookingsContainer">
+            <div style="text-align:center;padding:48px;color:#6b7280"><i class="fas fa-spinner fa-spin fa-2x"></i><p style="margin-top:12px">Загрузка бронирований...</p></div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .tab-btn { background:white; border:1px solid #e5e7eb; color:#374151; padding:8px 16px; border-radius:20px; font-size:14px; font-weight:500; transition:all 0.2s; }
+    .tab-btn:hover, .tab-btn.active { background:#003580; color:white; border-color:#003580; }
+</style>
+
+<script src="/js/main.js"></script>
+<script>
+    if (!Auth.isLoggedIn()) window.location.href = '/login';
+
+    let allBookings = [];
+    let currentFilter = 'all';
+
+    async function loadBookings() {
+        try {
+            allBookings = await api('/api/bookings/my');
+            renderBookings(allBookings);
+        } catch (e) {
+            document.getElementById('bookingsContainer').innerHTML =
+                `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Ошибка загрузки</h3><p>${e.message}</p></div>`;
+        }
+    }
+
+    function filterStatus(status, btn) {
+        currentFilter = status;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filtered = status === 'all' ? allBookings : allBookings.filter(b => b.status === status);
+        renderBookings(filtered);
+    }
+
+    function renderBookings(bookings) {
+        const container = document.getElementById('bookingsContainer');
+        if (!bookings.length) {
+            container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-calendar-times"></i>
+        <h3>Нет бронирований</h3>
+        <p>Самое время запланировать поездку!</p>
+        <a href="/hotels" style="color:#0071c2;font-weight:600;margin-top:12px;display:inline-block">
+          <i class="fas fa-search"></i> Найти отель
+        </a>
+      </div>`;
+            return;
+        }
+
+        container.innerHTML = bookings.map(b => {
+            const checkInDate = new Date(b.checkIn).toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' });
+            const checkOutDate = new Date(b.checkOut).toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' });
+            const canCancel = b.status === 'PENDING' || b.status === 'CONFIRMED';
+
+            return `
+    <div class="booking-card">
+      <img class="booking-card-img"
+           src="${b.hotelImageUrl || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300'}"
+           alt="${b.hotelName}"
+           onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300'"/>
+      <div class="booking-card-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <div class="booking-card-hotel">${b.hotelName}</div>
+            <div class="booking-card-room"><i class="fas fa-door-open"></i> ${b.roomName} · ${b.hotelCity}</div>
+          </div>
+          <span class="status-badge status-${b.status}">${statusLabel(b.status)}</span>
+        </div>
+
+        <div class="booking-meta">
+          <div class="booking-meta-item">
+            <span class="booking-meta-label"><i class="fas fa-sign-in-alt"></i> Заезд</span>
+            <span class="booking-meta-value">${checkInDate}</span>
+          </div>
+          <div class="booking-meta-item">
+            <span class="booking-meta-label"><i class="fas fa-sign-out-alt"></i> Выезд</span>
+            <span class="booking-meta-value">${checkOutDate}</span>
+          </div>
+          <div class="booking-meta-item">
+            <span class="booking-meta-label"><i class="fas fa-moon"></i> Ночей</span>
+            <span class="booking-meta-value">${b.nights}</span>
+          </div>
+        </div>
+
+        <!-- LIVE COUNTDOWN -->
+        <div data-checkin="${b.checkIn}" data-checkout="${b.checkOut}" id="countdown-${b.id}">
+          ${countdownBadge(Math.max(0, b.daysUntilCheckIn), Math.max(0, b.daysUntilFree))}
+        </div>
+
+        ${b.specialRequests ? `<div style="margin-top:8px;font-size:13px;color:#6b7280"><i class="fas fa-comment"></i> ${b.specialRequests}</div>` : ''}
+      </div>
+      <div class="booking-card-right">
+        <div>
+          <div class="booking-total-label">Итого</div>
+          <div class="booking-total">${formatPrice(b.totalPrice)} ₸</div>
+          <div style="font-size:12px;color:#6b7280">за ${b.nights} ноч.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <a href="/hotel/${b.hotelId}" style="color:#0071c2;font-size:13px;font-weight:600">Детали →</a>
+          ${canCancel ? `<button class="btn-cancel" onclick="cancelBooking(${b.id})">Отменить</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+        }).join('');
+
+        // Start live countdown
+        startLiveCountdowns();
+    }
+
+    function statusLabel(s) {
+        const map = { PENDING:'Ожидание', CONFIRMED:'Подтверждено', CANCELLED:'Отменено', COMPLETED:'Завершено' };
+        return map[s] || s;
+    }
+
+    async function cancelBooking(id) {
+        if (!confirm('Отменить бронирование?')) return;
+        try {
+            await api('/api/bookings/' + id + '/cancel', { method: 'PUT' });
+            showToast('Бронирование отменено');
+            loadBookings();
+        } catch (e) { showToast(e.message, true); }
+    }
+
+    loadBookings();
+</script>
+</body>
+</html>

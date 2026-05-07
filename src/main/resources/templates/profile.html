@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Профиль — NomadHome</title>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-container">
+    <a href="/" class="logo"><i class="fas fa-bed"></i> NomadHome</a>
+    <div class="nav-links" id="navLinks">
+        <a href="/hotels">Отели</a>
+        <a href="/bookings"><i class="fas fa-calendar-check"></i> Мои брони</a>
+        <span id="guestLinks"><a href="/login" class="btn-nav-outline">Войти</a></span>
+        <span id="userLinks" style="display:none">
+      <a href="/profile" style="color:var(--yellow)"><i class="fas fa-user-circle"></i> <span id="navUsername"></span></a>
+      <button onclick="logout()" class="btn-nav-outline">Выйти</button>
+    </span>
+    </div>
+    <button class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+</div></nav>
+
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-user-circle"></i> Мой профиль</h1>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container" style="max-width:700px">
+        <div style="background:white;border-radius:16px;padding:32px;box-shadow:0 2px 8px rgba(0,0,0,0.1)" id="profileCard">
+            <div style="text-align:center;padding:32px;color:#6b7280"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+        </div>
+    </div>
+</section>
+
+<script src="/js/main.js"></script>
+<script>
+    if (!Auth.isLoggedIn()) window.location.href = '/login';
+
+    function renderProfile() {
+        const user = Auth.getUser();
+        if (!user) { window.location.href = '/login'; return; }
+
+        document.getElementById('profileCard').innerHTML = `
+    <div style="display:flex;align-items:center;gap:20px;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid #e5e7eb">
+      <div style="width:80px;height:80px;background:linear-gradient(135deg,#003580,#0071c2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:32px">
+        ${(user.firstName || user.username).charAt(0).toUpperCase()}
+      </div>
+      <div>
+        <h2 style="font-size:22px;font-weight:700">${user.firstName || ''} ${user.lastName || ''}</h2>
+        <div style="color:#6b7280;margin-top:4px">@${user.username}</div>
+        <span style="background:${user.role === 'ADMIN' ? '#fee2e2' : '#e8f0fe'};color:${user.role === 'ADMIN' ? '#b91c1c' : '#1e40af'};padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-top:6px;display:inline-block">
+          ${user.role === 'ADMIN' ? '🔑 Администратор' : '👤 Пользователь'}
+        </span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px">
+      <div>
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:#9ca3af;margin-bottom:4px">Email</div>
+        <div style="font-weight:500">${user.email || '—'}</div>
+      </div>
+      <div>
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:#9ca3af;margin-bottom:4px">Роль</div>
+        <div style="font-weight:500">${user.role || '—'}</div>
+      </div>
+      <div>
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:#9ca3af;margin-bottom:4px">ID пользователя</div>
+        <div style="font-weight:500">#${user.userId || '—'}</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <a href="/bookings" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;width:auto;padding:12px 24px">
+        <i class="fas fa-calendar-check"></i> Мои бронирования
+      </a>
+      <a href="/hotels" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:12px 24px">
+        <i class="fas fa-search"></i> Найти отель
+      </a>
+      <button onclick="logout()" class="btn-cancel" style="padding:12px 24px">
+        <i class="fas fa-sign-out-alt"></i> Выйти
+      </button>
+    </div>
+  `;
+    }
+
+    renderProfile();
+</script>
+</body>
+</html>

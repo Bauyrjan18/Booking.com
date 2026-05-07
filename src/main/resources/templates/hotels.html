@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Отели — NomadHome</title>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-container">
+    <a href="/" class="logo"><i class="fas fa-bed"></i> NomadHome</a>
+    <div class="nav-links" id="navLinks">
+        <a href="/hotels">Отели</a>
+        <a href="/search">Поиск</a>
+        <span id="guestLinks"><a href="/login" class="btn-nav-outline">Войти</a><a href="/register" class="btn-nav">Регистрация</a></span>
+        <span id="userLinks" style="display:none">
+      <a href="/bookings"><i class="fas fa-calendar-check"></i> Брони</a>
+      <a href="/profile"><i class="fas fa-user-circle"></i> <span id="navUsername"></span></a>
+      <button onclick="logout()" class="btn-nav-outline">Выйти</button>
+    </span>
+    </div>
+    <button class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+</div></nav>
+
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-hotel"></i> Все отели</h1>
+        <p>Найдите свой идеальный вариант</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="search-layout">
+            <!-- FILTERS -->
+            <div class="filter-card">
+                <h3><i class="fas fa-filter"></i> Фильтры</h3>
+
+                <div class="filter-section">
+                    <h4>Город</h4>
+                    <div id="cityFilters"></div>
+                </div>
+
+                <div class="filter-section">
+                    <h4>Звёзды</h4>
+                    <label class="filter-check"><input type="checkbox" class="star-filter" value="5"/> ★★★★★ 5 звёзд</label>
+                    <label class="filter-check"><input type="checkbox" class="star-filter" value="4"/> ★★★★☆ 4 звезды</label>
+                    <label class="filter-check"><input type="checkbox" class="star-filter" value="3"/> ★★★☆☆ 3 звезды</label>
+                </div>
+
+                <div class="filter-section">
+                    <h4>Макс. цена за ночь</h4>
+                    <input type="range" class="range-input" id="priceRange" min="5000" max="200000" step="5000" value="200000" oninput="updatePriceLabel()"/>
+                    <div class="range-labels"><span>5 000 ₸</span><span id="priceLabel">200 000 ₸</span></div>
+                </div>
+
+                <button onclick="applyFilters()" class="btn-primary" style="margin-top:8px">
+                    <i class="fas fa-check"></i> Применить
+                </button>
+                <button onclick="resetFilters()" class="btn-secondary" style="margin-top:8px;width:100%">
+                    Сбросить
+                </button>
+            </div>
+
+            <!-- RESULTS -->
+            <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                    <h2 id="resultsCount">Загрузка...</h2>
+                    <select onchange="sortHotels(this.value)" style="padding:8px 12px;border:1px solid #e5e7eb;border-radius:6px;font-size:14px">
+                        <option value="rating">По рейтингу</option>
+                        <option value="price_asc">Цена ↑</option>
+                        <option value="price_desc">Цена ↓</option>
+                        <option value="stars">По звёздам</option>
+                    </select>
+                </div>
+                <div class="hotels-grid" id="hotelsGrid">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+                <div class="empty-state" id="emptyState" style="display:none">
+                    <i class="fas fa-search"></i>
+                    <h3>Ничего не найдено</h3>
+                    <p>Попробуйте изменить фильтры</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AI FAB -->
+<div class="ai-fab" onclick="toggleChat()" title="AI-помощник"><i class="fas fa-robot"></i><span class="ai-badge">AI</span></div>
+<div class="ai-chat-window" id="aiChat">
+    <div class="ai-chat-header">
+        <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+        <div><strong>NomadHome AI</strong><small>Онлайн</small></div>
+        <button onclick="toggleChat()" class="ai-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="ai-chat-messages" id="aiMessages">
+        <div class="ai-msg bot"><div class="ai-msg-bubble">👋 Привет! Помогу найти нужный отель. Спросите о рекомендациях!</div></div>
+    </div>
+    <div class="ai-quick-btns">
+        <button onclick="sendQuick('лучшие отели')">⭐ Топ</button>
+        <button onclick="sendQuick('дешевые отели')">💰 Бюджет</button>
+        <button onclick="sendQuick('люкс отели')">✨ Люкс</button>
+    </div>
+    <div class="ai-chat-input">
+        <input type="text" id="aiInput" placeholder="Напишите..." onkeydown="if(event.key==='Enter') sendAiMsg()"/>
+        <button onclick="sendAiMsg()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+    let allHotels = [];
+    let currentSort = 'rating';
+
+    async function loadHotels() {
+        try {
+            allHotels = await api('/api/hotels');
+
+            // Load city filters
+            const cities = [...new Set(allHotels.map(h => h.city))].sort();
+            document.getElementById('cityFilters').innerHTML = cities.map(c =>
+                `<label class="filter-check"><input type="checkbox" class="city-filter" value="${c}"/> ${c}</label>`
+            ).join('');
+
+            renderHotels(allHotels);
+        } catch (e) {
+            document.getElementById('hotelsGrid').innerHTML = '<p style="color:red">Ошибка загрузки</p>';
+        }
+    }
+
+    function renderHotels(hotels) {
+        const grid = document.getElementById('hotelsGrid');
+        const empty = document.getElementById('emptyState');
+        document.getElementById('resultsCount').textContent = `Найдено: ${hotels.length} отелей`;
+
+        if (!hotels.length) {
+            grid.innerHTML = ''; empty.style.display = 'block'; return;
+        }
+        empty.style.display = 'none';
+        grid.innerHTML = hotels.map(hotelCard).join('');
+    }
+
+    function sortHotels(by) {
+        currentSort = by;
+        const hotels = getFilteredHotels();
+        applySort(hotels, by);
+        renderHotels(hotels);
+    }
+
+    function applySort(hotels, by) {
+        if (by === 'rating') hotels.sort((a,b) => (b.averageRating||0) - (a.averageRating||0));
+        else if (by === 'price_asc') hotels.sort((a,b) => a.pricePerNight - b.pricePerNight);
+        else if (by === 'price_desc') hotels.sort((a,b) => b.pricePerNight - a.pricePerNight);
+        else if (by === 'stars') hotels.sort((a,b) => b.stars - a.stars);
+    }
+
+    function getFilteredHotels() {
+        const selectedCities = [...document.querySelectorAll('.city-filter:checked')].map(c => c.value);
+        const selectedStars = [...document.querySelectorAll('.star-filter:checked')].map(c => parseInt(c.value));
+        const maxPrice = parseInt(document.getElementById('priceRange').value);
+
+        return allHotels.filter(h => {
+            if (selectedCities.length && !selectedCities.includes(h.city)) return false;
+            if (selectedStars.length && !selectedStars.includes(h.stars)) return false;
+            if (h.pricePerNight > maxPrice) return false;
+            return true;
+        });
+    }
+
+    function applyFilters() {
+        const filtered = getFilteredHotels();
+        applySort(filtered, currentSort);
+        renderHotels(filtered);
+    }
+
+    function resetFilters() {
+        document.querySelectorAll('.city-filter, .star-filter').forEach(c => c.checked = false);
+        document.getElementById('priceRange').value = 200000;
+        updatePriceLabel();
+        renderHotels(allHotels);
+    }
+
+    function updatePriceLabel() {
+        const v = parseInt(document.getElementById('priceRange').value);
+        document.getElementById('priceLabel').textContent = v.toLocaleString('ru-KZ') + ' ₸';
+    }
+
+    loadHotels();
+</script>
+</body>
+</html>

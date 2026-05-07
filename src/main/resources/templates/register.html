@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Регистрация — NomadHome</title>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar"><div class="nav-container">
+    <a href="/" class="logo"><i class="fas fa-bed"></i> NomadHome</a>
+</div></nav>
+
+<div class="auth-page">
+    <div class="auth-card" style="max-width:520px">
+        <h1>Создать аккаунт</h1>
+        <p>Регистрация в NomadHome — это бесплатно</p>
+        <div class="error-msg" id="errMsg"></div>
+        <div class="success-msg" id="okMsg"></div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Имя</label>
+                <input type="text" id="firstName" placeholder="Алексей"/>
+            </div>
+            <div class="form-group">
+                <label>Фамилия</label>
+                <input type="text" id="lastName" placeholder="Иванов"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Имя пользователя</label>
+            <input type="text" id="username" placeholder="alexivanov"/>
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email" placeholder="alex@example.com"/>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Телефон</label>
+                <input type="tel" id="phone" placeholder="+7 777 123 4567"/>
+            </div>
+            <div class="form-group">
+                <label>Страна</label>
+                <input type="text" id="country" placeholder="Kazakhstan"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Пароль (минимум 6 символов)</label>
+            <input type="password" id="password" placeholder="••••••••"/>
+        </div>
+        <button class="btn-primary" onclick="doRegister()" id="regBtn">
+            <i class="fas fa-user-plus"></i> Зарегистрироваться
+        </button>
+        <div class="auth-footer">
+            Уже есть аккаунт? <a href="/login">Войти</a>
+        </div>
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+    if (Auth.isLoggedIn()) window.location.href = '/';
+
+    async function doRegister() {
+        const btn = document.getElementById('regBtn');
+        const err = document.getElementById('errMsg');
+        const ok = document.getElementById('okMsg');
+        err.style.display = 'none'; ok.style.display = 'none';
+
+        const body = {
+            firstName: document.getElementById('firstName').value.trim(),
+            lastName: document.getElementById('lastName').value.trim(),
+            username: document.getElementById('username').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            country: document.getElementById('country').value.trim(),
+            password: document.getElementById('password').value
+        };
+
+        if (!body.firstName || !body.lastName || !body.username || !body.email || !body.password) {
+            err.textContent = 'Заполните обязательные поля'; err.style.display = 'block'; return;
+        }
+        if (body.password.length < 6) {
+            err.textContent = 'Пароль должен быть не менее 6 символов'; err.style.display = 'block'; return;
+        }
+
+        btn.disabled = true; btn.textContent = 'Регистрация...';
+
+        try {
+            const data = await api('/api/auth/register', { method: 'POST', body: JSON.stringify(body) });
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data));
+            ok.textContent = 'Аккаунт создан! Перенаправляем...';
+            ok.style.display = 'block';
+            setTimeout(() => window.location.href = '/', 1200);
+        } catch (e) {
+            err.textContent = e.message || 'Ошибка при регистрации';
+            err.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-user-plus"></i> Зарегистрироваться';
+        }
+    }
+</script>
+</body>
+</html>

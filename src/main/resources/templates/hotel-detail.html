@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Отель — NomadHome</title>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar" id="navbar"><div class="nav-container">
+    <a href="/" class="logo"><i class="fas fa-bed"></i> NomadHome</a>
+    <div class="nav-links" id="navLinks">
+        <a href="/hotels">Отели</a>
+        <a href="/search">Поиск</a>
+        <span id="guestLinks"><a href="/login" class="btn-nav-outline">Войти</a><a href="/register" class="btn-nav">Регистрация</a></span>
+        <span id="userLinks" style="display:none">
+      <a href="/bookings"><i class="fas fa-calendar-check"></i> Брони</a>
+      <a href="/profile"><i class="fas fa-user-circle"></i> <span id="navUsername"></span></a>
+      <button onclick="logout()" class="btn-nav-outline">Выйти</button>
+    </span>
+    </div>
+    <button class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+</div></nav>
+
+<div class="section">
+    <div class="container">
+        <div id="hotelContent">
+            <div style="text-align:center;padding:60px;color:#6b7280"><i class="fas fa-spinner fa-spin fa-2x"></i><p style="margin-top:12px">Загрузка...</p></div>
+        </div>
+    </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="bookingModal">
+    <div class="modal">
+        <h2><i class="fas fa-calendar-check"></i> Бронирование</h2>
+        <p id="modalRoomName" style="color:#6b7280;margin-bottom:20px;font-size:15px"></p>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Дата заезда</label>
+                <input type="date" id="modalCheckIn" onchange="calcTotal()"/>
+            </div>
+            <div class="form-group">
+                <label>Дата выезда</label>
+                <input type="date" id="modalCheckOut" onchange="calcTotal()"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Особые пожелания (необязательно)</label>
+            <textarea id="modalRequests" rows="3" placeholder="Ранний заезд, высокий этаж..."></textarea>
+        </div>
+        <div id="totalBlock" style="background:#e8f0fe;border-radius:8px;padding:14px;margin:12px 0;display:none">
+            <div style="display:flex;justify-content:space-between;font-size:15px">
+                <span>Ночей:</span><strong id="nightsCount">—</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:18px;margin-top:8px;font-weight:700">
+                <span>Итого:</span><span id="totalPrice" style="color:#0071c2">—</span>
+            </div>
+        </div>
+        <div class="error-msg" id="bookingErr"></div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeBookingModal()">Отмена</button>
+            <button class="btn-confirm" onclick="submitBooking()" id="confirmBtn">Забронировать</button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+    const hotelId = window.location.pathname.split('/').pop();
+    let selectedRoom = null;
+
+    async function loadHotel() {
+        try {
+            const h = await api('/api/hotels/' + hotelId);
+            const reviews = await api('/api/reviews/hotel/' + hotelId);
+            renderHotel(h, reviews);
+        } catch {
+            document.getElementById('hotelContent').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Отель не найден</h3></div>';
+        }
+    }
+
+    function renderHotel(h, reviews) {
+        const stars = '★'.repeat(h.stars) + '☆'.repeat(5 - h.stars);
+        const rating = h.averageRating ? h.averageRating.toFixed(1) : 'Нет';
+        const amenityList = h.amenities ? h.amenities.split(',').map(a =>
+            `<span class="amenity-tag" style="padding:6px 12px;font-size:13px">${amenityIcon(a.trim())} ${a.trim()}</span>`
+        ).join('') : '';
+
+        const roomsHtml = (h.rooms || []).map(r => `
+    <div class="room-option" id="room-${r.id}" onclick="selectRoom(${r.id}, '${r.name}', ${r.pricePerNight})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="room-option-name"><i class="fas fa-door-open"></i> ${r.name}</div>
+          <div class="room-option-info"><i class="fas fa-users"></i> До ${r.capacity} чел. · ${r.type} · ${r.description || ''}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="room-option-price">${formatPrice(r.pricePerNight)} ₸</div>
+          <div style="font-size:12px;color:#6b7280">за ночь</div>
+        </div>
+      </div>
+    </div>`).join('');
+
+        const reviewsHtml = reviews.length ? reviews.map(r => `
+    <div class="review-card">
+      <div class="review-header">
+        <span class="reviewer"><i class="fas fa-user-circle"></i> ${r.username}</span>
+        <span class="review-score">${r.rating}/10</span>
+      </div>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:8px">${new Date(r.createdAt).toLocaleDateString('ru-RU')}</div>
+      ${r.comment ? `<div class="review-text">"${r.comment}"</div>` : ''}
+    </div>`).join('')
+            : '<p style="color:#6b7280;font-style:italic">Отзывов пока нет. Будьте первым!</p>';
+
+        document.getElementById('hotelContent').innerHTML = `
+    <div style="margin-bottom:16px">
+      <a href="/hotels" style="color:#0071c2;font-size:14px"><i class="fas fa-arrow-left"></i> Все отели</a>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+      <div>
+        <h1 style="font-size:28px;font-weight:700;margin-bottom:4px">${h.name}</h1>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="color:#f59e0b;font-size:18px">${stars}</span>
+          <span style="color:#6b7280"><i class="fas fa-map-marker-alt"></i> ${h.address}, ${h.city}, ${h.country}</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="background:#003580;color:white;padding:8px 16px;border-radius:8px;display:inline-block">
+          <div style="font-size:28px;font-weight:900">${rating}</div>
+          <div style="font-size:12px;opacity:0.8">${h.reviewCount || 0} отзывов</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hotel-gallery">
+      <img class="hotel-main-img" src="${h.imageUrl || 'https://images.unsplash.com/photo-1566073771259?w=800'}" alt="${h.name}"
+           onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'"/>
+      <div class="hotel-secondary-imgs">
+        <img src="${h.imageUrl || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400'}" alt=""
+             onerror="this.src='https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400'" style="object-fit:cover"/>
+        <img src="${h.imageUrl || 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400'}" alt=""
+             onerror="this.src='https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400'" style="object-fit:cover"/>
+      </div>
+    </div>
+
+    <div class="hotel-detail-grid">
+      <div>
+        <div style="background:white;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:24px">
+          <h2 style="font-size:20px;font-weight:700;margin-bottom:12px">Об отеле</h2>
+          <p style="color:#374151;line-height:1.7;font-size:15px">${h.description || 'Описание скоро появится.'}</p>
+          ${amenityList ? `<div style="margin-top:16px"><h3 style="font-size:15px;font-weight:600;margin-bottom:10px">Удобства</h3><div class="amenity-tags">${amenityList}</div></div>` : ''}
+        </div>
+
+        <div style="background:white;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:24px">
+          <h2 style="font-size:20px;font-weight:700;margin-bottom:16px">Выберите номер</h2>
+          <div class="rooms-list">${roomsHtml || '<p style="color:#6b7280">Номера загружаются...</p>'}</div>
+        </div>
+
+        <div style="background:white;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+          <h2 style="font-size:20px;font-weight:700;margin-bottom:16px">Отзывы гостей</h2>
+          ${reviewsHtml}
+          ${Auth.isLoggedIn() ? `
+          <div style="margin-top:20px;border-top:1px solid #e5e7eb;padding-top:20px">
+            <h3 style="font-size:16px;font-weight:600;margin-bottom:12px">Оставить отзыв</h3>
+            <div class="form-group"><label>Оценка (1-10)</label><input type="number" id="reviewRating" min="1" max="10" value="8" style="width:100px"/></div>
+            <div class="form-group"><label>Комментарий</label><textarea id="reviewComment" rows="3" placeholder="Поделитесь впечатлениями..."></textarea></div>
+            <button onclick="submitReview()" class="btn-book">Отправить отзыв</button>
+          </div>` : ''}
+        </div>
+      </div>
+
+      <div class="hotel-info-card">
+        <h3>Забронировать</h3>
+        <div style="margin-bottom:16px">
+          <div style="font-size:13px;color:#6b7280">от</div>
+          <div style="font-size:28px;font-weight:700">${formatPrice(h.pricePerNight)} <span style="font-size:16px;color:#6b7280">₸/ночь</span></div>
+        </div>
+        <div style="background:#f0f9ff;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#0369a1">
+          <i class="fas fa-info-circle"></i> Выберите номер ниже и нажмите «Забронировать»
+        </div>
+        <div id="selectedRoomInfo" style="display:none;background:#e8f0fe;border-radius:8px;padding:12px;margin-bottom:16px">
+          <div style="font-weight:600" id="selectedRoomName"></div>
+          <div style="font-size:13px;color:#6b7280" id="selectedRoomPrice"></div>
+        </div>
+        <button class="btn-primary" onclick="openBookingModal()" id="bookBtn">
+          <i class="fas fa-calendar-check"></i> Забронировать
+        </button>
+        <div style="margin-top:16px;font-size:12px;color:#6b7280;text-align:center">
+          <i class="fas fa-shield-alt"></i> Бесплатная отмена · Безопасное бронирование
+        </div>
+      </div>
+    </div>
+  `;
+    }
+
+    function selectRoom(id, name, price) {
+        document.querySelectorAll('.room-option').forEach(el => el.classList.remove('selected'));
+        document.getElementById('room-' + id)?.classList.add('selected');
+        selectedRoom = { id, name, price };
+        document.getElementById('selectedRoomInfo').style.display = 'block';
+        document.getElementById('selectedRoomName').textContent = name;
+        document.getElementById('selectedRoomPrice').textContent = formatPrice(price) + ' ₸/ночь';
+    }
+
+    function openBookingModal() {
+        if (!Auth.isLoggedIn()) { window.location.href = '/login'; return; }
+        if (!selectedRoom) { showToast('Выберите номер', true); return; }
+        document.getElementById('modalRoomName').textContent = selectedRoom.name + ' · ' + formatPrice(selectedRoom.price) + ' ₸/ночь';
+        const today = new Date();
+        const tomorrow = new Date(); tomorrow.setDate(today.getDate() + 1);
+        const nextWeek = new Date(); nextWeek.setDate(today.getDate() + 7);
+        document.getElementById('modalCheckIn').value = tomorrow.toISOString().split('T')[0];
+        document.getElementById('modalCheckOut').value = nextWeek.toISOString().split('T')[0];
+        document.getElementById('bookingModal').classList.add('open');
+        calcTotal();
+    }
+
+    function closeBookingModal() {
+        document.getElementById('bookingModal').classList.remove('open');
+        document.getElementById('bookingErr').style.display = 'none';
+    }
+
+    function calcTotal() {
+        const ci = document.getElementById('modalCheckIn').value;
+        const co = document.getElementById('modalCheckOut').value;
+        if (!ci || !co || !selectedRoom) return;
+        const nights = Math.ceil((new Date(co) - new Date(ci)) / 86400000);
+        if (nights <= 0) { document.getElementById('totalBlock').style.display = 'none'; return; }
+        document.getElementById('nightsCount').textContent = nights;
+        document.getElementById('totalPrice').textContent = formatPrice(selectedRoom.price * nights) + ' ₸';
+        document.getElementById('totalBlock').style.display = 'block';
+    }
+
+    async function submitBooking() {
+        const btn = document.getElementById('confirmBtn');
+        const err = document.getElementById('bookingErr');
+        err.style.display = 'none';
+        btn.disabled = true; btn.textContent = 'Бронируем...';
+
+        try {
+            await api('/api/bookings', {
+                method: 'POST',
+                body: JSON.stringify({
+                    hotelId: parseInt(hotelId),
+                    roomId: selectedRoom.id,
+                    checkIn: document.getElementById('modalCheckIn').value,
+                    checkOut: document.getElementById('modalCheckOut').value,
+                    specialRequests: document.getElementById('modalRequests').value
+                })
+            });
+            closeBookingModal();
+            showToast('🎉 Бронирование создано! Проверьте «Мои брони»');
+            setTimeout(() => window.location.href = '/bookings', 1500);
+        } catch (e) {
+            err.textContent = e.message; err.style.display = 'block';
+            btn.disabled = false; btn.textContent = 'Забронировать';
+        }
+    }
+
+    async function submitReview() {
+        const rating = parseInt(document.getElementById('reviewRating').value);
+        const comment = document.getElementById('reviewComment').value;
+        try {
+            await api('/api/reviews', { method: 'POST', body: JSON.stringify({ hotelId: parseInt(hotelId), rating, comment }) });
+            showToast('Отзыв отправлен!');
+            location.reload();
+        } catch (e) { showToast(e.message, true); }
+    }
+
+    loadHotel();
+</script>
+</body>
+</html>

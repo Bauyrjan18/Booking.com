@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NomadHome — Бронирование отелей</title>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo"><i class="fas fa-bed"></i> NomadHome</a>
+        <div class="nav-links" id="navLinks">
+            <a href="/hotels">Отели</a>
+            <a href="/search">Поиск</a>
+            <span id="guestLinks">
+        <a href="/login" class="btn-nav-outline">Войти</a>
+        <a href="/register" class="btn-nav">Регистрация</a>
+      </span>
+            <span id="userLinks" style="display:none">
+        <a href="/bookings"><i class="fas fa-calendar-check"></i> Мои брони</a>
+        <a href="/profile"><i class="fas fa-user-circle"></i> <span id="navUsername"></span></a>
+        <button onclick="logout()" class="btn-nav-outline">Выйти</button>
+      </span>
+        </div>
+        <button class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>Найдите идеальный отель</h1>
+        <p>Более 500 отелей по всему Казахстану и миру</p>
+
+        <!-- SEARCH BOX -->
+        <div class="search-box">
+            <div class="search-grid">
+                <div class="search-field">
+                    <label><i class="fas fa-map-marker-alt"></i> Город / направление</label>
+                    <input type="text" id="searchCity" placeholder="Алматы, Астана..." list="cityList"/>
+                    <datalist id="cityList"></datalist>
+                </div>
+                <div class="search-field">
+                    <label><i class="fas fa-calendar"></i> Заезд</label>
+                    <input type="date" id="searchCheckIn"/>
+                </div>
+                <div class="search-field">
+                    <label><i class="fas fa-calendar"></i> Выезд</label>
+                    <input type="date" id="searchCheckOut"/>
+                </div>
+                <div class="search-field">
+                    <label><i class="fas fa-user"></i> Гостей</label>
+                    <select id="searchGuests">
+                        <option value="1">1 гость</option>
+                        <option value="2" selected>2 гостя</option>
+                        <option value="3">3 гостя</option>
+                        <option value="4">4 гостя</option>
+                    </select>
+                </div>
+                <button class="btn-search" onclick="doSearch()">
+                    <i class="fas fa-search"></i> Найти
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-bar">
+    <div class="stats-container">
+        <div class="stat"><strong id="statHotels">0</strong><span>Отелей</span></div>
+        <div class="stat"><strong id="statCities">0</strong><span>Городов</span></div>
+        <div class="stat"><strong>4.8★</strong><span>Средний рейтинг</span></div>
+        <div class="stat"><strong>24/7</strong><span>Поддержка</span></div>
+    </div>
+</section>
+
+<!-- FEATURED HOTELS -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Популярные отели</h2>
+            <a href="/hotels" class="see-all">Все отели <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="hotels-grid" id="featuredHotels">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+        </div>
+    </div>
+</section>
+
+<!-- WHY US -->
+<section class="why-us">
+    <div class="container">
+        <h2>Почему NomadHome?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Безопасное бронирование</h3>
+                <p>Защита от SQL-инъекций, JWT-аутентификация, шифрование данных</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                <h3>AI-помощник</h3>
+                <p>Умный помощник подберёт лучший отель под ваши предпочтения и бюджет</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-clock"></i></div>
+                <h3>Счётчик до заезда</h3>
+                <p>Отслеживайте сколько дней до вашего путешествия в реальном времени</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-tags"></i></div>
+                <h3>Лучшие цены</h3>
+                <p>Гарантия лучшей цены. Найдём дешевле — вернём разницу</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AI CHATBOT -->
+<div class="ai-fab" onclick="toggleChat()" title="AI-помощник">
+    <i class="fas fa-robot"></i>
+    <span class="ai-badge">AI</span>
+</div>
+
+<div class="ai-chat-window" id="aiChat">
+    <div class="ai-chat-header">
+        <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+        <div>
+            <strong>NomadHome AI</strong>
+            <small>Онлайн</small>
+        </div>
+        <button onclick="toggleChat()" class="ai-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="ai-chat-messages" id="aiMessages">
+        <div class="ai-msg bot">
+            <div class="ai-msg-bubble">👋 Привет! Я AI-помощник NomadHome. Помогу найти лучший отель! Спросите меня о рекомендациях, ценах или конкретном городе.</div>
+        </div>
+    </div>
+    <div class="ai-quick-btns">
+        <button onclick="sendQuick('лучшие отели')">⭐ Топ отели</button>
+        <button onclick="sendQuick('дешевые отели')">💰 Бюджетные</button>
+        <button onclick="sendQuick('люкс отели')">✨ Люкс</button>
+        <button onclick="sendQuick('отели в Алматы')">🌆 Алматы</button>
+    </div>
+    <div class="ai-chat-input">
+        <input type="text" id="aiInput" placeholder="Напишите сообщение..." onkeydown="if(event.key==='Enter') sendAiMsg()"/>
+        <button onclick="sendAiMsg()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <h3><i class="fas fa-bed"></i> NomadHome</h3>
+                <p>Лучший сервис бронирования отелей в Казахстане. Java Spring Boot + REST API + JWT.</p>
+            </div>
+            <div>
+                <h4>Навигация</h4>
+                <a href="/">Главная</a>
+                <a href="/hotels">Отели</a>
+                <a href="/search">Поиск</a>
+            </div>
+            <div>
+                <h4>Аккаунт</h4>
+                <a href="/login">Войти</a>
+                <a href="/register">Регистрация</a>
+                <a href="/bookings">Мои брони</a>
+            </div>
+            <div>
+                <h4>Технологии</h4>
+                <p>☕ Java 17 + Spring Boot 3</p>
+                <p>🔒 JWT + Spring Security</p>
+                <p>🗃️ PostgreSQL + JPA</p>
+                <p>🤖 AI Recommendations</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 NomadHome. Финальный проект — Java Spring Boot</p>
+        </div>
+    </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+    // Set default dates
+    const today = new Date();
+    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+    const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 7);
+    document.getElementById('searchCheckIn').value = tomorrow.toISOString().split('T')[0];
+    document.getElementById('searchCheckOut').value = nextWeek.toISOString().split('T')[0];
+
+    // Load cities for datalist
+    fetch('/api/hotels/cities').then(r => r.json()).then(cities => {
+        const dl = document.getElementById('cityList');
+        cities.forEach(c => { const o = document.createElement('option'); o.value = c; dl.appendChild(o); });
+    });
+
+    // Load featured hotels
+    fetch('/api/hotels').then(r => r.json()).then(hotels => {
+        document.getElementById('statHotels').textContent = hotels.length;
+        const grid = document.getElementById('featuredHotels');
+        grid.innerHTML = '';
+        // Sort by rating, show top 4
+        const top = hotels.sort((a,b) => (b.averageRating||0) - (a.averageRating||0)).slice(0, 4);
+        top.forEach(h => grid.insertAdjacentHTML('beforeend', hotelCard(h)));
+    });
+
+    fetch('/api/hotels/cities').then(r => r.json()).then(c => {
+        document.getElementById('statCities').textContent = c.length;
+    });
+
+    function doSearch() {
+        const city = document.getElementById('searchCity').value;
+        const checkIn = document.getElementById('searchCheckIn').value;
+        const checkOut = document.getElementById('searchCheckOut').value;
+        const guests = document.getElementById('searchGuests').value;
+        const params = new URLSearchParams({ city, checkIn, checkOut, guests });
+        window.location.href = '/search?' + params.toString();
+    }
+</script>
+</body>
+</html>
